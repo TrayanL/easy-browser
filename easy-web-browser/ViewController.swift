@@ -25,15 +25,21 @@ class ViewController: UIViewController, WKNavigationDelegate {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Open", style: .plain, target: self, action: #selector(openTapped))
         
+        let backImage = UIImage(systemName: "arrow.left")
+        let forwardImage = UIImage(systemName: "arrow.right")
         
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let refresh = UIBarButtonItem(barButtonSystemItem: .refresh, target: webView, action: #selector(webView.reload))
+        let backButton = UIBarButtonItem(image: backImage, style: .plain, target: webView, action: #selector(webView.goBack))
+        let forwardButton = UIBarButtonItem(image: forwardImage, style: .plain, target: webView, action: #selector(webView.goForward))
+        
+        
         
         progressView = UIProgressView(progressViewStyle: .default)
         progressView.sizeToFit()
         let progressButton = UIBarButtonItem(customView: progressView)
         
-        toolbarItems = [refresh, spacer, progressButton]
+        toolbarItems = [backButton, forwardButton, spacer, progressButton, spacer, refresh]
         navigationController?.isToolbarHidden = false
         
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
@@ -81,8 +87,15 @@ class ViewController: UIViewController, WKNavigationDelegate {
                     return
                 }
             }
+            blockAlert()
         }
         decisionHandler(.cancel)
+    }
+    
+    func blockAlert() {
+        let ac = UIAlertController(title: "Blocked Website", message: "Unfortunately, this website cannot be visited through this application.", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(ac, animated: true)
     }
 
 
